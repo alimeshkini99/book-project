@@ -13,15 +13,15 @@ module.exports = new (class extends controller {
   async getBooks(req, res) {
     const bookList = await this.BookModel.find();
     console.log(bookList);
-    res.send(bookList);
+    this.response({data:bookList})
   }
 
 
   async getBook(req, res) {
     const { id } = req.params;
     const book = await this.BookModel.findOne({ isbn: id });
-    if (!book) return res.send("book not found");
-    res.send(book);
+    if (!book) {return this.response({code:400,message:"book not found"})}
+    this.response({data:book})
   } 
 
   async createBook(req, res) {
@@ -29,19 +29,19 @@ module.exports = new (class extends controller {
     const isbn = req.body.isbn;
     const author = req.body.author;
     const bookExist = await this.BookModel.findOne({ isbn: isbn });
-    if (bookExist) return res.send("book already exsit");
+    if (bookExist) {return this.response({code:400,message:"book already exist"})}
 
     var data = await this.BookModel.create({ title, isbn, author });
     data.save();
 
-    res.send("book Uploaded");
+    this.response({message:"book uploaded"})
   }
 
   async updateBook(req, res) {
     const { id } = req.params;
     const { title, author } = req.body;
     const bookExist = await this.BookModel.findOne({ isbn: id });
-    if (!bookExist) return res.send("book do not exist");
+    if (!bookExist) {return this.response({code:400,message:"book do not exist"})}
 
     const updateField = (val, prev) => (!val ? prev : val);
 
@@ -55,19 +55,19 @@ module.exports = new (class extends controller {
       { isbn: id },
       { $set: { title: updatedBook.title, author: updatedBook.author } }
     );
-    res.status(200).send("book updated");
+    this.response({message:"book updated"})
   }
 
   async deleteBook(req, res) {
     const { id } = req.params;
 
     const bookExist = await this.BookModel.findOne({ isbn: id });
-    if (!bookExist) return res.send("book do not exist");
+    if (!bookExist) {return this.response({code:400,message:"book do not exist"})}
 
     await this.BookModel.deleteOne({ isbn: id })
       .then(function () {
         console.log("data deleted");
-        res.send("book record deleted successully");
+        this.response({message:"book record deleted successully"})
       })
       .catch(function (error) {
         console.log(error);
