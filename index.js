@@ -3,7 +3,8 @@ const bodyParser = require('body-parser')
 const author = require('./routes/author')
 const book = require('./routes/book')
 const app = express()
-require('./config/db')()
+require('./startup/config.js')(app,express)
+require('./startup/db.js')()
 
 
 
