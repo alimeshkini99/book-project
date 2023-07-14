@@ -39,9 +39,8 @@ module.exports = new (class extends controller {
     const name = req.body.name;
     const birthDate = req.body.birthDate;
     const email = req.body.email;
-    // console.log(emailAddress);
     const authorExist = await this.AuthorModel.findOne({ email: email });
-    if (authorExist) {return this.response({code:400,message:"author exist"})}
+    if (authorExist) {return this.response({res,code:400,message:"author exist"})}
 
     let data = await this.AuthorModel.create({ name, birthDate, email});
     data.save();
@@ -57,6 +56,7 @@ module.exports = new (class extends controller {
     const { name, birthDate } = req.body;
     const authorExist = await this.AuthorModel.findOne({ email: email });
     if (!authorExist) {return this.response({
+      res,
       code:400,
       message:"author do not exist"
     })}

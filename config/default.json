@@ -1,7 +1,7 @@
 {
-  "name":"auth project",
+  "name":"book project",
   "db":{
       "address":"mongodb://127.0.0.1/bookDB"
-  },
-  "jwt-key":"hsoyam571"
+  }
+  
 }

@@ -20,28 +20,28 @@ module.exports = new (class extends controller {
   async getBook(req, res) {
     const { id } = req.params;
     const book = await this.BookModel.findOne({ isbn: id });
-    if (!book) {return this.response({code:400,message:"book not found"})}
-    this.response({data:book})
+    if (!book) {return this.response({res,code:400,message:"book not found"})}
+    this.response({res,data:book})
   } 
 
   async createBook(req, res) {
     const title = req.body.title;
     const isbn = req.body.isbn;
-    const author = req.body.author;
+    const author = req.body.author;  
     const bookExist = await this.BookModel.findOne({ isbn: isbn });
-    if (bookExist) {return this.response({code:400,message:"book already exist"})}
+    if (bookExist) {return this.response({res,code:400,message:"book already exist"})}
 
     var data = await this.BookModel.create({ title, isbn, author });
     data.save();
 
-    this.response({message:"book uploaded"})
+    this.response({res,message:"book uploaded"})
   }
 
   async updateBook(req, res) {
     const { id } = req.params;
     const { title, author } = req.body;
     const bookExist = await this.BookModel.findOne({ isbn: id });
-    if (!bookExist) {return this.response({code:400,message:"book do not exist"})}
+    if (!bookExist) {return this.response({res,code:400,message:"book do not exist"})}
 
     const updateField = (val, prev) => (!val ? prev : val);
 
@@ -55,19 +55,19 @@ module.exports = new (class extends controller {
       { isbn: id },
       { $set: { title: updatedBook.title, author: updatedBook.author } }
     );
-    this.response({message:"book updated"})
+    this.response({res,message:"book updated"})
   }
 
   async deleteBook(req, res) {
     const { id } = req.params;
 
     const bookExist = await this.BookModel.findOne({ isbn: id });
-    if (!bookExist) {return this.response({code:400,message:"book do not exist"})}
+    if (!bookExist) {return this.response({res,code:400,message:"book do not exist"})}
 
     await this.BookModel.deleteOne({ isbn: id })
       .then(function () {
         console.log("data deleted");
-        this.response({message:"book record deleted successully"})
+        this.response({res,message:"book record deleted successully"})
       })
       .catch(function (error) {
         console.log(error);
