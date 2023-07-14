@@ -5,4 +5,10 @@ module.exports = class {
     this.AuthorModel = AuthorModel;
     this.BookModel = BookModel;
   }
+  response({res,message,code=200,data={}}) {
+    res.status(code).json({
+      message,
+      data,
+    });
+  }
 };

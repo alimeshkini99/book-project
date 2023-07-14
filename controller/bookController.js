@@ -16,12 +16,13 @@ module.exports = new (class extends controller {
     res.send(bookList);
   }
 
+
   async getBook(req, res) {
     const { id } = req.params;
     const book = await this.BookModel.findOne({ isbn: id });
     if (!book) return res.send("book not found");
     res.send(book);
-  }
+  } 
 
   async createBook(req, res) {
     const title = req.body.title;

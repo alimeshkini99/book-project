@@ -13,14 +13,26 @@ module.exports = new (class extends controller {
   async getAuthors(req, res) {
     const authorList = await this.AuthorModel.find();
     console.log(authorList);
-    res.send(authorList);
+    this.response({
+      res,
+      data:authorList
+    })
   }
 
   async getAuthor(req, res) {
     const { id } = req.params;
-    const author = await this.AuthorModel.find({ _id: id });
-    if (!author) return res.send("author not found");
-    res.send(author);
+    const author = await this.AuthorModel.findOne({ _id: id });
+    console.log(author);
+    if (!author) { return this.response({
+      res,
+      code:400,
+      message:'author not found' 
+    })}
+    this.response({
+      res,
+      code:200,
+      data:author
+    }) 
   }
 
   async createAuthor(req, res) {
@@ -29,19 +41,25 @@ module.exports = new (class extends controller {
     const email = req.body.email;
     // console.log(emailAddress);
     const authorExist = await this.AuthorModel.findOne({ email: email });
-    if (authorExist) return res.send("author exsit");
+    if (authorExist) {return this.response({code:400,message:"author exist"})}
 
     let data = await this.AuthorModel.create({ name, birthDate, email});
     data.save();
 
-    res.send("author Uploaded");
+    this.response({
+      res,
+      message:'author uploded'
+    })
   }
 
   async updateAuthor(req, res) {
     const { email } = req.params;
     const { name, birthDate } = req.body;
     const authorExist = await this.AuthorModel.findOne({ email: email });
-    if (!authorExist) return res.send("author do not exist");
+    if (!authorExist) {return this.response({
+      code:400,
+      message:"author do not exist"
+    })}
 
     const updateField = (val, prev) => (!val ? prev : val);
 
@@ -55,19 +73,20 @@ module.exports = new (class extends controller {
       { email: email },
       { $set: { name: updatedAuthor.name, birthDate: updatedAuthor.birthDate } }
     );
-    res.status(200).send("Author updated");
+    this.response({res,code:200,message:"Author updated"})
   }
 
   async deleteAuthor(req, res) {
     const { email } = req.params;
 
     const authorExist = await this.AuthorModel.findOne({ email: email });
-    if (!authorExist) return res.send("author do not exist");
+    if (!authorExist) {return this.response({res,code:400,message:"author do not exist"})}
+    
 
     await this.AuthorModel.deleteOne({ email: email })
       .then(function () {
         console.log("data deleted");
-        res.send("author record deleted successully");
+        res.status(400).send("author record deleted successully");
       })
       .catch(function (error) {
         console.log(error);
