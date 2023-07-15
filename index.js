@@ -1,15 +1,13 @@
+require('express-async-errors')
 const express = require('express')
 const bodyParser = require('body-parser')
 const author = require('./routes/author')
 const book = require('./routes/book')
+const winston=require('winston')
 const app = express()
 require('./startup/config.js')(app,express)
 require('./startup/db.js')()
-
-
-
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }));
+winston.add(new winston.transports.File({filename:'logfile.log'}))
 app.use('/api/author',author)
 app.use('/api/book',book)
 
