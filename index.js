@@ -1,13 +1,12 @@
-require('express-async-errors')
 const express = require('express')
-const bodyParser = require('body-parser')
 const author = require('./routes/author')
 const book = require('./routes/book')
-const winston=require('winston')
 const app = express()
 require('./startup/config.js')(app,express)
 require('./startup/db.js')()
-winston.add(new winston.transports.File({filename:'logfile.log'}))
+require('./startup/logging.js')()
+
+
 app.use('/api/author',author)
 app.use('/api/book',book)
 
